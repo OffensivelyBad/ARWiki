@@ -20,21 +20,29 @@ class Scene: SKScene {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let sceneView = self.view as? ARSKView else {
-            return
+        
+        // Remove a page if it's been tapped
+        guard let touch = touches.first else { return }
+        let location = touch.location(in: self)
+        let hit = nodes(at: location)
+        
+        if let sprite = hit.first, sprite.name == "page" {
+            let scale = SKAction.scale(to: 0, duration: 0.2)
+            let fade = SKAction.fadeOut(withDuration: 0.2)
+            let group = SKAction.group([scale, fade])
+            let sequence = SKAction.sequence([group, SKAction.removeFromParent()])
+            
+            if let spriteParent = sprite.parent, spriteParent.name == "page" {
+                spriteParent.run(sequence)
+            }
+            for child in sprite.children {
+                if child.name == "page" {
+                    child.run(sequence)
+                }
+            }
+            
+            sprite.run(sequence)
         }
         
-        // Create anchor using the camera's current position
-        if let currentFrame = sceneView.session.currentFrame {
-            
-            // Create a transform with a translation of 0.2 meters in front of the camera
-            var translation = matrix_identity_float4x4
-            translation.columns.3.z = -0.2
-            let transform = simd_mul(currentFrame.camera.transform, translation)
-            
-            // Add a new anchor to the session
-            let anchor = ARAnchor(transform: transform)
-            sceneView.session.add(anchor: anchor)
-        }
     }
 }
