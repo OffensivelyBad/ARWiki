@@ -76,11 +76,13 @@ extension ViewController: ARSKViewDelegate {
             if String(describing: anchor.identifier) == page.uuid {
                 let title = page.title
                 let labelNode = SKLabelNode(text: title)
+                labelNode.name = "page"
                 labelNode.horizontalAlignmentMode = .center
                 labelNode.verticalAlignmentMode = .center
                 
                 let size = labelNode.frame.size.applying(CGAffineTransform(scaleX: 1.1, y: 1.4))
                 let backgroundNode = SKShapeNode(rectOf: size, cornerRadius: 10)
+                backgroundNode.name = "page"
                 backgroundNode.fillColor = UIColor(hue: CGFloat(GKRandomSource.sharedRandom().nextUniform()), saturation: 0.5, brightness: 0.4, alpha: 0.9)
                 backgroundNode.strokeColor = backgroundNode.fillColor.withAlphaComponent(1)
                 backgroundNode.lineWidth = 2
